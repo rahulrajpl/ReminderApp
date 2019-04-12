@@ -4,13 +4,13 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="cleaning">Cleaning...</string>
-    <string name="add_todo_item">Add task</string>
+    <string name="add_todo_item">Add an Entry</string>
     <string name="add_todo_item_hint">Insert your task here</string>
     <string name="empty_input">Don\'t leave your task empty</string>
     <string name="reminder_or_not">Set a reminder for me</string>
     <string name="set_date">Set Date</string>
     <string name="set_time">Set Time</string>
-    <string name="reminder_set_at">Reminder set at</string>
+    <string name="reminder_set_at">Reminder saved at</string>
     <string name="reminder_info">Info about reminder:</string>
     <string name="not_found">Not found!</string>
     <string name="item_deleted">Task deleted!</string>

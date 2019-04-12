@@ -16,30 +16,40 @@
             android:layout_height="match_parent"
             android:orientation="vertical"
             >
+
             <LinearLayout
+                android:id="@+id/todoDetailLayout"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="4.5"
-                android:gravity="center"
                 android:background="#3f51b5"
-                android:id="@+id/todoDetailLayout">
+                android:gravity="center"
+                android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/todoInfo"
+                    style="@style/TextAppearance.AppCompat.Body1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:gravity="start|bottom"
-                    android:layout_marginRight="32dp"
                     android:layout_marginLeft="32dp"
-                    android:textSize="24sp"
-                    android:lineSpacingExtra="10dp"
+                    android:layout_marginRight="32dp"
+                    android:layout_marginTop="50dp"
                     android:ellipsize="end"
-                    android:text="SampleText"
+                    android:gravity="center"
+                    android:lineSpacingExtra="10dp"
                     android:maxLines="5"
-                    style="@style/TextAppearance.AppCompat.Body1"
+                    android:text="SampleText"
+                    android:foregroundGravity="center"
                     android:textColor="@android:color/white"
-                    android:id="@+id/todoInfo"
-                    />
+                    android:textSize="24sp" />
+
+                <ImageView
+                    android:id="@+id/ivAddress"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+
+                    android:src="@drawable/ic_address" />
 
             </LinearLayout>
 
