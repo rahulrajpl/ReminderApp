@@ -6,12 +6,14 @@ package cs634a.com.RemindMe;
 
 public class ToDoItem {
     private String content;
+    private String address;
     private Boolean done;
     private String reminderDate;
     private Boolean hasReminder;
 
-    public ToDoItem(String content, Boolean done, String reminderDate, Boolean hasReminder) {
+    public ToDoItem(String content, String address, Boolean done, String reminderDate, Boolean hasReminder) {
         this.content = content;
+        this.address = address;
         this.done = done;
         this.reminderDate = reminderDate;
         this.hasReminder = hasReminder;
@@ -23,6 +25,10 @@ public class ToDoItem {
 
     public String getContent() {
         return content;
+    }
+
+    public String getAddress(){
+        return address;
     }
 
     public void setContent(String content) {

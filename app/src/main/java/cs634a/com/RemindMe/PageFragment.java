@@ -73,6 +73,7 @@ public class PageFragment extends Fragment {
                 Intent intent = new Intent(getContext(), DetailTodoItem.class);
                 ToDoItem item = toDoItems.get(position);
                 intent.putExtra("content", item.getContent());
+                intent.putExtra("address", item.getAddress());
                 intent.putExtra("reminder", item.getReminderDate());
                 intent.putExtra("hasReminder", item.getHasReminder());
                 intent.putExtra("done", item.getDone());

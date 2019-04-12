@@ -29,6 +29,7 @@ public class AddTodoItem extends AppCompatActivity implements DatePickerDialog.O
 
     // Bind components
     @BindView(R.id.todoEditText) MaterialEditText materialTextInput;
+    @BindView(R.id.metAddress) MaterialEditText metAddress;
     @BindView(R.id.buttonSetDate) Button buttonSetDate;
     @BindView(R.id.buttonSetTime) Button buttonSetTime;
     @BindView(R.id.reminderSwitch) Switch reminderSwitch;
@@ -41,11 +42,13 @@ public class AddTodoItem extends AppCompatActivity implements DatePickerDialog.O
     UpdateDatabase updateDatabase;
 
     String content;
+    String address;
     String date;
     String time;
 
     // Old content for edit function
     String oldContent = "";
+    String oldAddress = "";
     String oldReminder = "";
     Boolean oldHasReminder;
     Boolean oldDone;
@@ -135,6 +138,8 @@ public class AddTodoItem extends AppCompatActivity implements DatePickerDialog.O
                     return;
                 // get content input from user
                 content = materialTextInput.getText().toString();
+                address = metAddress.getText().toString().trim();
+
                 // no error found, start adding to database
                 addItemToDatabase();
                 // this check is used for update/edit a todoItem case
@@ -143,7 +148,7 @@ public class AddTodoItem extends AppCompatActivity implements DatePickerDialog.O
                     UpdateDatabase updateDatabaseInstance = new UpdateDatabase();
                     // remove in database
                     oldRowId = updateDatabaseInstance.removeInDatabase(oldContent, oldReminder, AddTodoItem.this);
-                    toDoItem = new ToDoItem(oldContent, oldDone, oldReminder, oldHasReminder);
+                    toDoItem = new ToDoItem(oldContent, oldAddress, oldDone, oldReminder, oldHasReminder);
                     PageFragment.toDoItems.remove(toDoItem);
                     // remove existing scheduled notification
                     dateTimeUtils.cancelScheduledNotification(dateTimeUtils.getNotification(oldContent, AddTodoItem.this),
@@ -231,9 +236,9 @@ public class AddTodoItem extends AppCompatActivity implements DatePickerDialog.O
 
         // when insert into database, also construct a new object for notifydatasetchanged()
         if (reminderDate.equals(" ")) // no reminder
-            toDoItem = new ToDoItem(content, false, reminderDate, false);
+            toDoItem = new ToDoItem(content, address,false, reminderDate, false);
         else  //  with reminder
-            toDoItem = new ToDoItem(content, false, reminderDate, true);
+            toDoItem = new ToDoItem(content, address,false, reminderDate, true);
         PageFragment.toDoItems.add(toDoItem);
         newRowId = updateDatabase.addItemToDatabase(content, false, reminderDate, AddTodoItem.this);
     }

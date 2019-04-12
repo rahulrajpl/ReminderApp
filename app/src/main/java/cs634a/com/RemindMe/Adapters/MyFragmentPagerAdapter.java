@@ -12,7 +12,7 @@ import cs634a.com.RemindMe.PageFragment;
 
 public class MyFragmentPagerAdapter extends FragmentStatePagerAdapter {
     private final int PAGE_COUNT = 3;
-    private String[] tabTitles = new String[] {"Inbox", "Today", "Next 7 days"};  // titles for 3 tabs
+    private String[] tabTitles = new String[] {"Inbox", "Today", "Next Week"};  // titles for 3 tabs
 
     public MyFragmentPagerAdapter(FragmentManager fm) {
         super(fm);

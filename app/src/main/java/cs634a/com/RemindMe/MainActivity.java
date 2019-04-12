@@ -45,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
 
     UpdateDatabase updateDatabase;
 
+
     // images for switcher
     private static final int[] IMAGES = {R.drawable.inbox, R.drawable.today, R.drawable.seven_day};
 
@@ -128,22 +129,23 @@ public class MainActivity extends AppCompatActivity {
                 SQLiteDatabase db = mDbHelper.getReadableDatabase();
                 Cursor cursor;
                 // depending on the page : inbox, today, or next 7 days to query
+
                 switch(mPage)
                 {
-                    case 0:
-                        cursor = db.rawQuery(
-                                "Select "
-                                + TodoListContract.TodoListEntries.COLUMN_NAME_CONTENT + ", "
-                                + TodoListContract.TodoListEntries.COLUMN_NAME_DONE + ", "
-                                + TodoListContract.TodoListEntries.COLUMN_NAME_REMINDERDATE
-                                + " FROM "
-                                + TodoListContract.TodoListEntries.TABLE_NAME
+                    case 0: //All Reminders. No Filter
+                        cursor = db.rawQuery("Select " + TodoListContract.TodoListEntries.COLUMN_NAME_CONTENT + ", "
+                                        + TodoListContract.TodoListEntries.COLUMN_NAME_ADDRESS + ", "
+                                        + TodoListContract.TodoListEntries.COLUMN_NAME_DONE + ", "
+                                        + TodoListContract.TodoListEntries.COLUMN_NAME_REMINDERDATE
+                                        + " FROM "
+                                        + TodoListContract.TodoListEntries.TABLE_NAME
                                 , null);
                         break;
-                    case 1:
+                    case 1: // For Today's Filter
                         cursor = db.rawQuery(
                                 "Select "
                                 + TodoListContract.TodoListEntries.COLUMN_NAME_CONTENT + ", "
+                                + TodoListContract.TodoListEntries.COLUMN_NAME_ADDRESS + ","
                                 + TodoListContract.TodoListEntries.COLUMN_NAME_DONE + ", "
                                 + TodoListContract.TodoListEntries.COLUMN_NAME_REMINDERDATE
                                 + " FROM "
@@ -154,10 +156,11 @@ public class MainActivity extends AppCompatActivity {
                                 + " date('now') AND date('now', '+1 day') "
                                 , null);
                         break;
-                    case 2:
+                    case 2: // For Seven Days filter
                         cursor = db.rawQuery(
                                 "Select "
                                 + TodoListContract.TodoListEntries.COLUMN_NAME_CONTENT + ", "
+                                + TodoListContract.TodoListEntries.COLUMN_NAME_ADDRESS + ","
                                 + TodoListContract.TodoListEntries.COLUMN_NAME_DONE + ", "
                                 + TodoListContract.TodoListEntries.COLUMN_NAME_REMINDERDATE
                                 + " FROM "
@@ -178,6 +181,9 @@ public class MainActivity extends AppCompatActivity {
                         String content = cursor.getString(cursor.getColumnIndex(
                                 TodoListContract.TodoListEntries.COLUMN_NAME_CONTENT
                         ));
+                        String address = cursor.getString(cursor.getColumnIndex(
+                                TodoListContract.TodoListEntries.COLUMN_NAME_ADDRESS
+                        ));
                         int doneInt = cursor.getInt(cursor.getColumnIndex(
                                 TodoListContract.TodoListEntries.COLUMN_NAME_DONE
                         ));
@@ -188,8 +194,8 @@ public class MainActivity extends AppCompatActivity {
                         if (content == null && reminderDate == null) break; // stop before cursor go too far
                         // no reminder date -> construct object with a space
                         if (reminderDate == null)
-                            toDoItems.add(new ToDoItem(content, done, " ", false));
-                        else toDoItems.add(new ToDoItem(content, done, reminderDate, true));
+                            toDoItems.add(new ToDoItem(content, address, done, " ", false));
+                        else toDoItems.add(new ToDoItem(content, address, done, reminderDate, true));
                     } while (cursor.moveToNext());
                 }
                 cursor.close();

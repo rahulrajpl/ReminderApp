@@ -1,10 +1,12 @@
 package cs634a.com.RemindMe;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,11 +18,13 @@ import butterknife.ButterKnife;
 public class DetailTodoItem extends AppCompatActivity {
 
     @BindView(R.id.todoInfo) TextView todoInfo;
+    @BindView(R.id.ivAddress) ImageView ivAddress;
     @BindView(R.id.reminderInfo) TextView reminderInfo;
     @BindView(R.id.editTodoBtn) FloatingActionButton editTodo;
     @BindView(R.id.deleteTodoBtn) FloatingActionButton deleteTodo;
 
     String content;
+    String address;
     String reminder;
     Boolean hasReminder;
     Boolean done;
@@ -36,6 +40,20 @@ public class DetailTodoItem extends AppCompatActivity {
         initComponents();
         getDataFromIntent();
         assignComponents();
+
+        ivAddress.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //Toast.makeText(DetailTodoItem.this, "Clicked", Toast.LENGTH_SHORT).show();
+                if(address.toString().isEmpty()){
+                    Toast.makeText(DetailTodoItem.this, "No Address Entry for this reminder", Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("geo:0,0?q=" + address));
+                    startActivity(intent);
+                }
+            }
+        });
     }
 
     private void initComponents() {
@@ -49,6 +67,7 @@ public class DetailTodoItem extends AppCompatActivity {
         // because we go from main activity to here
         Intent intent = getIntent();
         content = intent.getStringExtra("content");
+        address = intent.getStringExtra("address");
         reminder = intent.getStringExtra("reminder");
         hasReminder = intent.getExtras().getBoolean("hasReminder");
         done = intent.getExtras().getBoolean("done");
@@ -67,6 +86,7 @@ public class DetailTodoItem extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(DetailTodoItem.this, AddTodoItem.class);
                 intent.putExtra("content", content);
+                intent.putExtra("address", address);
                 intent.putExtra("reminder", reminder);
                 intent.putExtra("hasReminder", hasReminder);
                 intent.putExtra("done", done);
@@ -80,7 +100,7 @@ public class DetailTodoItem extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Toast.makeText(DetailTodoItem.this, getString(R.string.item_deleted), Toast.LENGTH_SHORT).show();
-                ToDoItem toDoItem = new ToDoItem(content, done, reminder, hasReminder);
+                ToDoItem toDoItem = new ToDoItem(content,address, done, reminder, hasReminder);
                 PageFragment.toDoItems.remove(toDoItem);
                 // remove in database
                 oldRowId = updateDatabase.removeInDatabase(content, reminder, DetailTodoItem.this);
