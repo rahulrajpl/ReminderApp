@@ -105,12 +105,12 @@ public class MyDateTimeUtils {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
         builder.setContentTitle(context.getString(R.string.task_to_be_done));
         builder.setContentText(content);
-        builder.setSmallIcon(R.drawable.ic_stat_name);
+        builder.setSmallIcon(R.drawable.ic_stat_name1);
         builder.setDefaults(Notification.DEFAULT_ALL);
         builder.setPriority(Notification.PRIORITY_MAX);
         builder.setStyle(new NotificationCompat.BigTextStyle().bigText(content));
         builder.setLargeIcon(BitmapFactory.decodeResource(context.getResources(),
-                R.mipmap.ic_launcher));
+                R.mipmap.ic_launcher1));
         builder.setShowWhen(false);
         return builder.build();
     }

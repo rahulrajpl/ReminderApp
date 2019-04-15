@@ -28,8 +28,8 @@ public class DetailTodoItem extends AppCompatActivity {
     String reminder;
     Boolean hasReminder;
     Boolean done;
-    UpdateDatabase updateDatabase; // util to do update stuffs in db
-    MyDateTimeUtils dateTimeUtils; // util to do stuffs with notification
+    UpdateDatabase updateDatabase;
+    MyDateTimeUtils dateTimeUtils;
 
     private long oldRowId;
 
@@ -44,8 +44,7 @@ public class DetailTodoItem extends AppCompatActivity {
         ivAddress.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //Toast.makeText(DetailTodoItem.this, "Clicked", Toast.LENGTH_SHORT).show();
-                if(address.toString().isEmpty()){
+                if(address.toString().trim().isEmpty()){
                     Toast.makeText(DetailTodoItem.this, "No Address Entry for this reminder", Toast.LENGTH_SHORT).show();
                 }
                 else{
@@ -64,7 +63,6 @@ public class DetailTodoItem extends AppCompatActivity {
     }
 
     private void getDataFromIntent() {
-        // because we go from main activity to here
         Intent intent = getIntent();
         content = intent.getStringExtra("content");
         address = intent.getStringExtra("address");
@@ -75,12 +73,11 @@ public class DetailTodoItem extends AppCompatActivity {
 
 
     private void assignComponents() {
-        // update UI with the content taken from intent
         todoInfo.setText(content);
+
         if (hasReminder)
             reminderInfo.setText(reminder);
         else reminderInfo.setText(getString(R.string.not_found));
-        // if edit button is press fire add activity with a little tweak
         editTodo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -95,16 +92,13 @@ public class DetailTodoItem extends AppCompatActivity {
             }
         });
 
-        // if delete is pressed then delete item in databse and alro remove object for notifydatsetchanged
         deleteTodo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(DetailTodoItem.this, getString(R.string.item_deleted), Toast.LENGTH_SHORT).show();
                 ToDoItem toDoItem = new ToDoItem(content,address, done, reminder, hasReminder);
                 PageFragment.toDoItems.remove(toDoItem);
-                // remove in database
-                oldRowId = updateDatabase.removeInDatabase(content, reminder, DetailTodoItem.this);
-                // remove existing scheduled notification if existed
+                oldRowId = updateDatabase.removeInDatabase(content,address, reminder, DetailTodoItem.this);
                 if (!reminder.equals(" "))
                     dateTimeUtils.cancelScheduledNotification(dateTimeUtils.getNotification(content,DetailTodoItem.this),
                             DetailTodoItem.this, (int) oldRowId);

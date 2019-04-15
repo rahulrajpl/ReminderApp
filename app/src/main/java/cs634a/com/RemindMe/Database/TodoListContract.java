@@ -3,7 +3,6 @@ package cs634a.com.RemindMe.Database;
 import android.provider.BaseColumns;
 
 
-// this class is for database use. Reference https://developer.android.com/training/basics/data-storage/databases.html
 public final class TodoListContract {
     private TodoListContract() {}
 

@@ -12,14 +12,10 @@ import cs634a.com.RemindMe.Database.TodoListContract;
 import cs634a.com.RemindMe.Database.TodoListDbHelper;
 import cs634a.com.RemindMe.R;
 
-/**
- * Created by cs634a on 24/07/2017.
- */
-
 // This class contains every helper function that relates to updating the database
 public class UpdateDatabase {
     // this func marks an item done status in the database
-    public void updateDoneInDatabase(final String content, final String reminder,
+    public void updateDoneInDatabase(final String content,final String address, final String reminder,
                                      final Boolean done, final Context context) {
         // because database doesn't have boolean type
         final int doneInt = (done) ? 1 : 0;
@@ -77,7 +73,7 @@ public class UpdateDatabase {
     }
 
     // this function remove an item in the database. Use case : delete on clicked
-    public long removeInDatabase(final String content, final String reminder, final Context context) {
+    public long removeInDatabase(final String content, final String address, final String reminder, final Context context) {
         String whereClause1 = TodoListContract.TodoListEntries.COLUMN_NAME_CONTENT + " = "
                 + " '" + content +"' "
                 + " AND "
@@ -99,13 +95,14 @@ public class UpdateDatabase {
     }
 
     // add item to database given every info
-    public long addItemToDatabase(String content, Boolean done, String reminderDate, Context context) {
+    public long addItemToDatabase(String content, String address, Boolean done, String reminderDate, Context context) {
         TodoListDbHelper dbHelper = new TodoListDbHelper(context);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
 
         // when insert into database, also construct a new object for notifydatasetchanged()
         values.put(TodoListContract.TodoListEntries.COLUMN_NAME_CONTENT, content);
+        values.put(TodoListContract.TodoListEntries.COLUMN_NAME_ADDRESS, address);
         values.put(TodoListContract.TodoListEntries.COLUMN_NAME_DONE, done);
         if (reminderDate.equals(" ")) // no reminder = reminder is null
             values.putNull(TodoListContract.TodoListEntries.COLUMN_NAME_REMINDERDATE);

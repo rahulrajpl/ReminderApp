@@ -4,4 +4,7 @@
     <item android:id="@+id/clean_all_done"
           android:title="@string/clean_all_done"
           app:showAsAction="never"/>
+    <item android:id="@+id/AppInfo"
+        android:title="App Info"
+        app:showAsAction="never"/>
 </menu>

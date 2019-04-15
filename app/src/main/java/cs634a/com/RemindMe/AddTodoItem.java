@@ -46,7 +46,6 @@ public class AddTodoItem extends AppCompatActivity implements DatePickerDialog.O
     String date;
     String time;
 
-    // Old content for edit function
     String oldContent = "";
     String oldAddress = "";
     String oldReminder = "";
@@ -54,10 +53,8 @@ public class AddTodoItem extends AppCompatActivity implements DatePickerDialog.O
     Boolean oldDone;
     Boolean existingData;
 
-    // rowID after adding into database
     private long newRowId;
 
-    // rowID after deleting from database
     private long oldRowId;
 
     @Override
@@ -68,7 +65,6 @@ public class AddTodoItem extends AppCompatActivity implements DatePickerDialog.O
         existingData = loadDataIfExist();
     }
 
-    // attach view with controllers
     private void initializeComponents() {
         getSupportActionBar().setTitle(R.string.add_todo_item);
         ButterKnife.bind(this);
@@ -77,7 +73,6 @@ public class AddTodoItem extends AppCompatActivity implements DatePickerDialog.O
         date ="";
         time ="";
 
-        // if switch is check then reveal data and time picker
         reminderSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -133,28 +128,20 @@ public class AddTodoItem extends AppCompatActivity implements DatePickerDialog.O
         addTodoBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // validate all input field
                 if (!validateAllInput())
                     return;
-                // get content input from user
                 content = materialTextInput.getText().toString();
-                address = metAddress.getText().toString().trim();
 
-                // no error found, start adding to database
+
                 addItemToDatabase();
-                // this check is used for update/edit a todoItem case
-                // basically, after insert a new one, delete the old one, like trigger in database.
                 if (existingData) {
                     UpdateDatabase updateDatabaseInstance = new UpdateDatabase();
-                    // remove in database
-                    oldRowId = updateDatabaseInstance.removeInDatabase(oldContent, oldReminder, AddTodoItem.this);
+                    oldRowId = updateDatabaseInstance.removeInDatabase(oldContent,oldAddress, oldReminder, AddTodoItem.this);
                     toDoItem = new ToDoItem(oldContent, oldAddress, oldDone, oldReminder, oldHasReminder);
                     PageFragment.toDoItems.remove(toDoItem);
-                    // remove existing scheduled notification
                     dateTimeUtils.cancelScheduledNotification(dateTimeUtils.getNotification(oldContent, AddTodoItem.this),
                             AddTodoItem.this, (int)oldRowId);
                 }
-                // schedule a notification if date and time is set
                 if (!(date+" "+time).equals(" "))
                     dateTimeUtils.ScheduleNotification(dateTimeUtils.getNotification(content, AddTodoItem.this),
                         AddTodoItem.this, (int)newRowId, date + " " + time);
@@ -164,7 +151,6 @@ public class AddTodoItem extends AppCompatActivity implements DatePickerDialog.O
     }
 
     private Boolean validateAllInput() {
-        // check if user chose date but didn't choose time
         if (time.equals("") && !date.equals("")) {
             AlertDialog alertDialog = new AlertDialog.Builder(AddTodoItem.this).create();
             alertDialog.setTitle(getString(R.string.time_error));
@@ -175,52 +161,42 @@ public class AddTodoItem extends AppCompatActivity implements DatePickerDialog.O
                     dialog.dismiss();
                 }
             });
-            // user choose our default time
             alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "CHOOSE DEFAULT 9 A.M.", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    // explicitly call onTimeSet to take advantage of time check
                     onTimeSet(null, 9, 0, 0); // default picked time at 9:00 A.M
                 }
             });
             alertDialog.show();
             return false;
         }
-        // first validate if the input is empty or not
         if (!materialTextInput.validateWith(
                 new RegexpValidator("String must not be empty", "^(?!\\s*$).+"))) {
             Toast.makeText(AddTodoItem.this, "Empty task detected! No task added!", Toast.LENGTH_SHORT).show();
             return false;
         }
-        // check if old content is the same as new content
-        // if yes then user didn't do any action and should press back rather than add
         if ((oldContent.equals(content) || content == null) && oldReminder.equals(date + " " + time)){
-            finish(); // finish activity instead of returning anything - UX
+            finish();
         }
-        // everything is OK.
         return true;
     }
 
-    // load data passed from another activity, return success or not
-    // this one is to distinguish between add and edit activity
     private Boolean loadDataIfExist() {
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
         if (extras == null) return false;
-        // get attributes from intent
         oldContent = extras.getString("content");
+        oldAddress = extras.getString("address");
         oldReminder = extras.getString("reminder");
         oldHasReminder = extras.getBoolean("hasReminder");
         oldDone = extras.getBoolean("done");
 
         materialTextInput.setText(oldContent);
-        // stop here if no reminder is set, else continue
+        metAddress.setText(oldAddress);
         if (oldReminder.equals(" "))
             return true;
-        // split string to get specific date and time
         date = oldReminder.split("\\s+")[0];
         time = oldReminder.split("\\s+")[1];
-        // change text on screen and make date time picker visible
         reminderText.setText(getString(R.string.reminder_set_at) + " " + date + " " + time);
         reminderSwitch.setChecked(true);
         buttonSetDate.setVisibility(View.VISIBLE);
@@ -229,29 +205,24 @@ public class AddTodoItem extends AppCompatActivity implements DatePickerDialog.O
         return true;
     }
 
-    // this function is to add an item into database
     private void addItemToDatabase() {
-        // concat date and time
         String reminderDate = date + " " + time;
-
-        // when insert into database, also construct a new object for notifydatasetchanged()
+        address = metAddress.getText().toString().trim();
         if (reminderDate.equals(" ")) // no reminder
             toDoItem = new ToDoItem(content, address,false, reminderDate, false);
         else  //  with reminder
             toDoItem = new ToDoItem(content, address,false, reminderDate, true);
         PageFragment.toDoItems.add(toDoItem);
-        newRowId = updateDatabase.addItemToDatabase(content, false, reminderDate, AddTodoItem.this);
+        newRowId = updateDatabase.addItemToDatabase(content,address, false, reminderDate, AddTodoItem.this);
     }
 
 
     @Override
     public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
-        // if the date is in the past tell user to choose again
         if (dateTimeUtils.checkInvalidDate(year, monthOfYear, dayOfMonth)){
             AlertDialog alertDialog = new AlertDialog.Builder(AddTodoItem.this).create();
             alertDialog.setTitle("Date not valid!");
             alertDialog.setIcon(R.drawable.ic_warning_black_24dp);
-            alertDialog.setMessage("You are selecting a time a point of time in the past!");
             alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
@@ -262,19 +233,15 @@ public class AddTodoItem extends AppCompatActivity implements DatePickerDialog.O
             return;
         }
 
-        // set date value to the value user selected and change the text
         date = dateTimeUtils.dateToString(year, monthOfYear, dayOfMonth);
         reminderText.setText(getString(R.string.reminder_set_at) + " " + date + " " + time);
     }
 
     @Override
     public void onTimeSet(TimePickerDialog view, int hourOfDay, int minute, int second) {
-        // if date is not chosen first but time is chosen -> make today the default date.
-        // also check for valid time, must be today but not the past hour or minutes.
         if (date.equals(dateTimeUtils.fillDateIfEmpty("")) && dateTimeUtils.checkInvalidTime(hourOfDay, minute)) {
             AlertDialog alertDialog = new AlertDialog.Builder(AddTodoItem.this).create();
             alertDialog.setTitle("Time not valid!");
-            alertDialog.setMessage("You are selecting a point of time in the past!");
             alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
@@ -285,7 +252,6 @@ public class AddTodoItem extends AppCompatActivity implements DatePickerDialog.O
             return;
         }
 
-        // set time value and update text
         time = dateTimeUtils.timeToString(hourOfDay, minute);
         reminderText.setText(getString(R.string.reminder_set_at) + " " + date + " " + time);
     }

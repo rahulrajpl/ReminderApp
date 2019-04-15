@@ -6,13 +6,11 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 
 import cs634a.com.RemindMe.PageFragment;
 
-/**
- * Created by cs634a on 18/07/2017.
- */
+
 
 public class MyFragmentPagerAdapter extends FragmentStatePagerAdapter {
     private final int PAGE_COUNT = 3;
-    private String[] tabTitles = new String[] {"Inbox", "Today", "Next Week"};  // titles for 3 tabs
+    private String[] tabTitles = new String[] {"All Tasks", "Today", "This Week"};
 
     public MyFragmentPagerAdapter(FragmentManager fm) {
         super(fm);

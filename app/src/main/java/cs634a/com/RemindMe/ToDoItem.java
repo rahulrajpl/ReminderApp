@@ -1,8 +1,5 @@
 package cs634a.com.RemindMe;
 
-/**
- * Created by cs634a on 19/07/2017.
- */
 
 public class ToDoItem {
     private String content;
@@ -34,6 +31,7 @@ public class ToDoItem {
     public void setContent(String content) {
         this.content = content;
     }
+    public void setAddress(String address) {this.address = address; }
 
     public Boolean getDone() {
         return done;
@@ -47,18 +45,8 @@ public class ToDoItem {
         return reminderDate;
     }
 
-    // this serves logging.
-//    @Override
-//    public String toString() {
-//        return "ToDoItem{" +
-//                "content='" + content + '\'' +
-//                ", done=" + done +
-//                ", reminderDate='" + reminderDate + '\'' +
-//                ", hasReminder=" + hasReminder +
-//                '}';
-//    }
 
-    // compare object for remove from array list
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -69,6 +57,8 @@ public class ToDoItem {
             return false;
         ToDoItem other = (ToDoItem) obj;
         if (!content.equals(other.content))
+            return false;
+        if (!address.equals(other.address))
             return false;
         if (!reminderDate.equals(other.reminderDate))
             return false;
